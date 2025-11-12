@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Partner Login - Dip Dry Care Partner Portal</title>
+    <meta name="description" content="Secure login portal for Dip Dry Care laundry partners and vendors">
+
+    <!-- External CSS Libraries -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+
+    <style>
+        .partner-hero {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #10b981 100%);
+            min-height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .partner-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="3" fill="rgba(255,255,255,0.1)" opacity="0.8"><animate attributeName="cy" values="20;80;20" dur="3s" repeatCount="indefinite"/></circle><circle cx="50" cy="60" r="2" fill="rgba(255,255,255,0.1)" opacity="0.6"><animate attributeName="cy" values="60;10;60" dur="4s" repeatCount="indefinite"/></circle><circle cx="80" cy="40" r="4" fill="rgba(255,255,255,0.1)" opacity="0.7"><animate attributeName="cy" values="40;90;40" dur="5s" repeatCount="indefinite"/></circle></svg>') repeat;
+            opacity: 0.3;
+        }
+
+        .partner-login-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            max-width: 480px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .partner-brand-section {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .partner-logo {
+            width: 80px;
+            height: 80px;
+            border-radius: 30px;
+            margin-bottom: 1rem;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .partner-brand-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #1e3a8a;
+            margin-bottom: 0.5rem;
+        }
+
+        .partner-brand-subtitle {
+            color: #64748b;
+            font-size: 1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .partner-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-top: 0.5rem;
+        }
+
+        .form-floating-custom {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-floating-custom input {
+            background: rgba(248, 250, 252, 0.8);
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 1rem 1.5rem;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            height: 60px;
+        }
+
+        .form-floating-custom input:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+            background: white;
+        }
+
+        .form-floating-custom label {
+            padding: 1rem 1.5rem;
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        .partner-login-btn {
+            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+            border: none;
+            border-radius: 16px;
+            padding: 1rem 2rem;
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: white;
+            width: 100%;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            transition: all 0.3s ease;
+            margin-bottom: 1.5rem;
+        }
+
+        .partner-login-btn:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(30, 58, 138, 0.4);
+            background: linear-gradient(135deg, #1e40af, #2563eb);
+        }
+
+        .partner-login-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .back-to-site-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            border-radius: 999px;
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            background: rgba(255, 255, 255, 0.15);
+            color: #fff;
+            backdrop-filter: blur(8px);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            line-height: 1;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+
+        .back-to-site-btn:hover {
+            transform: translateY(-1px);
+            background: rgba(255, 255, 255, 0.22);
+            box-shadow: 0 10px 24px rgba(0, 0, 0, 0.15);
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .remember-forgot-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .custom-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+
+        .custom-checkbox input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #3b82f6;
+        }
+
+        .forgot-link {
+            color: #3b82f6;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .forgot-link:hover {
+            color: #1e40af;
+            text-decoration: underline;
+        }
+
+        .partner-footer {
+            text-align: center;
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        .partner-features {
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+            color: white;
+            z-index: 2;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+            opacity: 0.9;
+        }
+
+        .feature-icon {
+            width: 32px;
+            height: 32px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+        }
+
+        .stats-section {
+            position: absolute;
+            bottom: 2rem;
+            right: 2rem;
+            color: white;
+            text-align: right;
+            z-index: 2;
+        }
+
+        .stat-item {
+            margin-bottom: 0.75rem;
+        }
+
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+
+        .partner-types {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-top: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .partner-type {
+            color: #e2e8f0;
+            font-size: 0.85rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+
+            .partner-features,
+            .stats-section {
+                display: none;
+            }
+
+            .partner-login-card {
+                margin: 1rem;
+                max-width: none;
+            }
+
+            .partner-hero {
+                padding: 1rem 0;
+            }
+        }
+
+        /* Loading Animation */
+        .loading-spinner {
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .back-to-site-wrap {
+            position: absolute;
+            top: 18px;
+            left: 18px;
+            z-index: 20;
+        }
+
+        .back-to-site-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            border-radius: 999px;
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            background: rgba(255, 255, 255, 0.15);
+            color: #fff;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            font-weight: 600;
+            font-size: 0.95rem;
+            line-height: 1;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+
+        .back-to-site-btn:hover {
+            transform: translateY(-1px);
+            background: rgba(255, 255, 255, 0.22);
+            box-shadow: 0 10px 24px rgba(0, 0, 0, 0.15);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="partner-hero">
+        <!-- Partner Features -->
+        <!-- Top-left Back to Website button -->
+        <!-- REPLACE the back button section -->
+        <div class="back-to-site-wrap">
+            <a href="index.html" class="back-to-site-btn" id="backToSiteBtn">
+                <i class="fas fa-arrow-left me-2"></i>
+                Back to website
+            </a>
+        </div>
+        <div class="partner-features d-none d-lg-block">
+            <h3 style="margin-bottom: 1.5rem; font-weight: 700;
+            padding-top: 3rem;">Partner Benefits</h3>
+            <div class="feature-item">
+                <div class="feature-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <span>Real-time order tracking & management</span>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">
+                    <i class="fas fa-rupee-sign"></i>
+                </div>
+                <span>Instant payment processing & reports</span>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">
+                    <i class="fas fa-mobile-alt"></i>
+                </div>
+                <span>Mobile-friendly dashboard</span>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">
+                    <i class="fas fa-headset"></i>
+                </div>
+                <span>24/7 partner support</span>
+            </div>
+
+            <div class="partner-types">
+                <h5 style="margin-bottom: 1rem; font-weight: 600;">We Partner With:</h5>
+                <div class="partner-type">🧺 Laundry & Dry Cleaning Services</div>
+                <div class="partner-type">🚚 Pickup & Delivery Providers</div>
+                <div class="partner-type">📦 Packaging & Supply Vendors</div>
+                <div class="partner-type">🏪 Local Service Centers</div>
+            </div>
+        </div>
+
+        <!-- Stats Section -->
+        <div class="stats-section d-none d-lg-block">
+            <div class="stat-item">
+                <span class="stat-number">150+</span>
+                <span class="stat-label">Active Partners</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number">₹25L+</span>
+                <span class="stat-label">Monthly Payments</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number">98%</span>
+                <span class="stat-label">Partner Satisfaction</span>
+            </div>
+        </div>
+
+        <!-- Login Card -->
+        <div class="container">
+            <div class="row justify-content-center align-items-center min-vh-100">
+                <div class="col-12">
+                    <div class="partner-login-card mx-auto p-4 p-lg-5">
+                        <!-- Brand Section -->
+                        <div class="partner-brand-section">
+                            <img src="../Images/dipdrylogo.jpg" alt="Dip Dry Care" class="partner-logo">
+                            <h2 class="partner-brand-title">Dip Dry Care</h2>
+                            <p class="partner-brand-subtitle">Partner Portal</p>
+                            <div class="partner-badge">
+                                <i class="fas fa-handshake"></i>
+                                <span>Trusted Partner Network</span>
+                            </div>
+                        </div>
+
+                        <!-- Login Form -->
+                        <form id="partnerLoginForm" novalidate>
+                            <div class="form-floating-custom">
+                                <input type="text" class="form-control" id="partnerUsername" name="username" required>
+                                <label for="partnerUsername">
+                                    <i class="fas fa-user me-2"></i>Partner ID / Username
+                                </label>
+                            </div>
+
+                            <div class="form-floating-custom">
+                                <input type="password" class="form-control" id="partnerPassword" name="password"
+                                    required>
+                                <label for="partnerPassword">
+                                    <i class="fas fa-lock me-2"></i>Password
+                                </label>
+                            </div>
+
+                            <div class="remember-forgot-section">
+                                <label class="custom-checkbox">
+                                    <input type="checkbox" id="rememberPartner" name="remember">
+                                    <span>Keep me signed in</span>
+                                </label>
+                                <a href="#" class="forgot-link" onclick="showForgotPassword()">
+                                    Forgot Password?
+                                </a>
+                            </div>
+
+                            <button type="submit" class="partner-login-btn" id="partnerLoginButton">
+                                <span class="btn-text">
+                                    <i class="fas fa-sign-in-alt me-2"></i>Access Partner Dashboard
+                                </span>
+                                <div class="loading-spinner" style="display: none;"></div>
+                            </button>
+                        </form>
+
+                        <!-- Footer -->
+                        <div class="partner-footer">
+                            <p class="mb-2">New partner? <strong>Contact us for partnership opportunities</strong></p>
+                            <p class="mb-0">
+                                <small>
+                                    📧 partners@dipdrycare.com | 📞 +91 9876543210<br>
+                                    Secure login protected by industry-standard encryption
+                                </small>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../JSfiles/config/api-config.js"></script>
+<script src="../JSfiles/error-handler.js"></script>
+<script src="../JSfiles/partner-auth.js"></script>
+<script src="../JSfiles/partner-login.js"></script>
+</body>
+
+</html>

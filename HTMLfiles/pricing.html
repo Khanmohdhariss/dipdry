@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Smart Pricing & Cart - Fresh Clean Laundry</title>
+  <meta name="description"
+    content="Browse our complete laundry pricing with instant search, add items to cart with quantities, and place orders seamlessly." />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="../CSSfiles/styles.css" />
+  <style>
+    .pricing-hero {
+      background: linear-gradient(135deg, #176FF2 0%, #3ED598 100%);
+    }
+
+    .search-wrap {
+      position: sticky;
+      top: 76px;
+      z-index: 9;
+      background: #fff;
+      padding: 20px;
+      border-bottom: 2px solid #eef2f7;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, .08);
+    }
+
+    .search-input {
+      border-radius: 14px;
+      padding: 1rem 1.2rem;
+      border: 2px solid #e9eef5;
+      font-size: 1.1rem;
+    }
+
+    .search-input:focus {
+      border-color: #176FF2;
+      box-shadow: 0 0 0 .3rem rgba(23, 111, 242, .15);
+    }
+
+    .tab-btn {
+      font-weight: 700;
+      border-radius: 12px;
+    }
+
+    .section-card {
+      border-radius: 16px;
+      border: 1px solid #eef2f7;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, .08);
+    }
+
+    .item-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px;
+      border-bottom: 1px solid #f1f5f9;
+    }
+
+    .item-row:last-child {
+      border-bottom: none;
+    }
+
+    .item-row:hover {
+      background: #f8fafc;
+    }
+
+    .item-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex: 1;
+    }
+
+    .item-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f0f7ff;
+      color: #176FF2;
+    }
+
+    .item-details {
+      flex: 1;
+    }
+
+    .item-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .qty-controls {
+      display: flex;
+      align-items: center;
+      background: #f1f5f9;
+      border-radius: 10px;
+      padding: 2px;
+    }
+
+    .qty-btn {
+      background: none;
+      border: none;
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: #334155;
+    }
+
+    .qty-btn:hover {
+      background: #e2e8f0;
+      color: #176FF2;
+    }
+
+    .qty-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .qty-input {
+      width: 50px;
+      text-align: center;
+      border: none;
+      background: transparent;
+      font-weight: 600;
+    }
+
+    .add-btn {
+      background: linear-gradient(135deg, #176FF2, #3ED598);
+      border: none;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 10px;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .add-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(23, 111, 242, .3);
+    }
+
+    .add-btn:disabled {
+      background: #e2e8f0;
+      color: #94a3b8;
+      transform: none;
+    }
+
+    .badge-unit {
+      background: #e0f2fe;
+      color: #0369a1;
+      font-weight: 600;
+    }
+
+    .pill {
+      border-radius: 999px;
+      padding: 8px 16px;
+      font-weight: 700;
+    }
+
+    .not-found {
+      background: #fff7ed;
+      border: 2px solid #fed7aa;
+      border-radius: 14px;
+      padding: 20px;
+      color: #9a3412;
+    }
+
+    .cart-sidebar {
+      position: fixed;
+      right: -400px;
+      top: 0;
+      width: 400px;
+      height: 100vh;
+      background: white;
+      box-shadow: -4px 0 20px rgba(0, 0, 0, .15);
+      z-index: 1000;
+      transition: right 0.3s ease;
+      overflow-y: auto;
+    }
+
+    .cart-sidebar.open {
+      right: 0;
+    }
+
+    .cart-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, .5);
+      z-index: 999;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s;
+    }
+
+    .cart-overlay.show {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .cart-header {
+      padding: 20px;
+      border-bottom: 2px solid #f1f5f9;
+      background: #f8fafc;
+    }
+
+    .cart-content {
+      padding: 20px;
+    }
+
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      margin-bottom: 12px;
+    }
+
+    .cart-summary {
+      background: linear-gradient(135deg, #176FF2, #3ED598);
+      color: white;
+      padding: 20px;
+      border-radius: 14px;
+      margin-top: 20px;
+    }
+
+    .floating-cart {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 999;
+    }
+
+    .cart-badge {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      background: #ef4444;
+      color: white;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .search-priority {
+      background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+      border: 2px solid #0ea5e9;
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .priority-badge {
+      background: #0ea5e9;
+      color: white;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 700;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top shadow-sm">
+    <div class="container">
+      <a class="navbar-brand fw-bold" href="index.html">
+        <!-- Brand: Dip Dry Care logo + wordmark -->
+        <a class="navbar-brand d-flex align-items-center gap-2" href="index.html" id="brandTrigger"
+          aria-label="Dip Dry Care">
+          <img src="../Images/dipdrylogo.jpg" alt="Dip Dry Care" class="brand-avatar" />
+          <span class="fw-bold brand-name mb-0">DIP DRY CARE</span>
+        </a>
+
+        <!-- Zoom overlay (place right after the navbar) -->
+        <div id="brandOverlay" class="brand-overlay" aria-hidden="true">
+          <div class="brand-overlay-inner" role="dialog" aria-modal="true" aria-label="Dip Dry Care Logo">
+            <img src="../Images/dipdrylogo.jpg" alt="Dip Dry Care" class="brand-overlay-img" />
+          </div>
+        </div>
+
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav"><span
+          class="navbar-toggler-icon"></span></button>
+      <div class="collapse navbar-collapse" id="nav">
+        <ul class="navbar-nav ms-auto align-items-lg-center">
+          <li class="nav-item"><a class="nav-link" href="index.html">HOME</a></li>
+          <li class="nav-item"><a class="nav-link" href="services.html">SERVICES</a></li>
+          <li class="nav-item"><a class="nav-link active" href="pricing.html">PRICING</a></li>
+          <li class="nav-item"><a class="nav-link" href="testimonials.html">TESTIMONIALS</a></li>
+          <li class="nav-item"><a class="nav-link" href="contact.html">CONTACT US</a></li>
+          <li class="nav-item">
+          <li class="nav-item"><a class="nav-link" href="join.html" >JOIN US</a></li>
+          </li>
+          <li class="nav-item"><a class="btn btn-primary ms-lg-2" href="order.html">ORDER NOW</a>
+            <!-- Logo Login Dropdown -->
+          <li class="nav-item dropdown ms-lg-3">
+            <a class="nav-link dropdown-toggle d-flex align-items-center p-0" href="#" id="brandMenu" role="button"
+              data-bs-toggle="dropdown" aria-expanded="false">
+              <img src="../Images/dipdrylogo.jpg" alt="Dip Dry Care" class="brand-avatar">
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="brandMenu">
+              <li class="px-3 py-2 border-bottom">
+                <div class="d-flex align-items-center">
+                  <img src="../Images/dipdrylogo.jpg" alt="Dip Dry Care" class="brand-avatar me-2"
+                    style="width:36px;height:36px;">
+                  <div>
+                    <div class="fw-bold">Dip Dry Care</div>
+                    <small class="text-muted">Secure access</small>
+                  </div>
+                </div>
+              </li>
+              <li><a class="dropdown-item d-flex align-items-center" href="admin-login-premium.html">
+                  <i class="fa-solid fa-user-shield text-primary me-2"></i> Admin Login
+                </a></li>
+              <li><a class="dropdown-item d-flex align-items-center" href="partner-login.html">
+                  <i class="fa-solid fa-handshake text-success me-2"></i> Vendor / Partner Login
+                </a></li>
+              <li>
+                <hr class="dropdown-divider">
+              </li>
+              <li><a class="dropdown-item d-flex align-items-center" href="contact.html">
+                  <i class="fa-solid fa-life-ring text-info me-2"></i> Need Help?
+                </a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+      </li>
+      </ul>
+    </div>
+    </div>
+  </nav>
+
+  <!-- Header -->
+  <header class="pricing-hero text-white pt-5 pb-4" style="margin-top:76px;">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-lg-8">
+          <h1 class="fw-800 display-5 mb-2">Smart Pricing & Cart</h1>
+          <p class="lead mb-0">Search, select quantities, and add items to your cart instantly.</p>
+        </div>
+        <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
+          <button class="btn btn-light btn-lg pill me-2" onclick="toggleCart()">
+            <i class="fa-solid fa-shopping-cart me-2"></i>View Cart (<span id="cartCount">0</span>)
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Global Search -->
+  <div class="search-wrap">
+    <div class="container">
+      <div class="row g-3 align-items-center">
+        <div class="col-lg-8">
+          <div class="input-group">
+            <span class="input-group-text bg-white"><i class="fa-solid fa-magnifying-glass text-primary"></i></span>
+            <input id="globalSearch" type="text" class="form-control search-input"
+              placeholder="Search items, e.g., Saree, Jacket, Blanket, Curtains, Shoes..." />
+            <button class="btn btn-outline-secondary" type="button" onclick="clearSearch()">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </div>
+        </div>
+        <div class="col-lg-4 text-lg-end">
+          <span id="searchCount" class="badge bg-primary pill">Showing all items</span>
+        </div>
+      </div>
+      <div id="noResults" class="not-found mt-3 d-none">
+        <strong><i class="fa-regular fa-circle-xmark me-1"></i>No matching items found.</strong> Try a different term or
+        <a href="contact.html" class="text-decoration-underline fw-bold">request a custom quote</a>.
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <section class="py-4">
+    <div class="container">
+      <!-- Search Results (Priority Display) -->
+      <div id="searchResultsWrap" class="d-none">
+        <div class="search-priority">
+          <div class="d-flex align-items-center justify-content-between mb-3">
+            <div>
+              <h4 class="fw-bold mb-1"><i class="fa-solid fa-search me-2 text-primary"></i>Search Results</h4>
+              <span class="priority-badge">PRIORITY DISPLAY</span>
+            </div>
+            <button class="btn btn-sm btn-outline-primary" onclick="clearSearch()">
+              <i class="fa-solid fa-times me-1"></i>Clear Search
+            </button>
+          </div>
+          <div class="section-card bg-white p-2">
+            <div id="searchResults"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Category Tabs (Hidden during search) -->
+      <div id="categoryTabs">
+        <ul class="nav nav-pills mb-3" id="priceTabs" role="tablist">
+          <li class="nav-item" role="presentation"><button class="nav-link active tab-btn" data-bs-toggle="pill"
+              data-bs-target="#tab-laundry" type="button">Laundry</button></li>
+          <li class="nav-item" role="presentation"><button class="nav-link tab-btn" data-bs-toggle="pill"
+              data-bs-target="#tab-men" type="button">Men</button></li>
+          <li class="nav-item" role="presentation"><button class="nav-link tab-btn" data-bs-toggle="pill"
+              data-bs-target="#tab-women" type="button">Women</button></li>
+          <li class="nav-item" role="presentation"><button class="nav-link tab-btn" data-bs-toggle="pill"
+              data-bs-target="#tab-woolen" type="button">Woolen</button></li>
+          <li class="nav-item" role="presentation"><button class="nav-link tab-btn" data-bs-toggle="pill"
+              data-bs-target="#tab-household" type="button">Household</button></li>
+        </ul>
+
+        <div class="tab-content">
+          <div class="tab-pane fade show active" id="tab-laundry">
+            <div class="section-card bg-white p-2">
+              <div id="list-laundry"></div>
+            </div>
+          </div>
+          <div class="tab-pane fade" id="tab-men">
+            <div class="section-card bg-white p-2">
+              <div id="list-men"></div>
+            </div>
+          </div>
+          <div class="tab-pane fade" id="tab-women">
+            <div class="section-card bg-white p-2">
+              <div id="list-women"></div>
+            </div>
+          </div>
+          <div class="tab-pane fade" id="tab-woolen">
+            <div class="section-card bg-white p-2">
+              <div id="list-woolen"></div>
+            </div>
+          </div>
+          <div class="tab-pane fade" id="tab-household">
+            <div class="section-card bg-white p-2">
+              <div id="list-household"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="text-center mt-4">
+        <button class="btn btn-primary btn-lg pill" onclick="toggleCart()">
+          <i class="fa-solid fa-shopping-cart me-2"></i>View Cart & Checkout
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Floating Cart Button -->
+  <div class="floating-cart">
+    <button class="btn btn-primary btn-lg rounded-circle" onclick="toggleCart()" style="width: 60px; height: 60px;">
+      <i class="fa-solid fa-shopping-cart"></i>
+      <span id="floatingCartBadge" class="cart-badge d-none">0</span>
+    </button>
+  </div>
+
+  <!-- Cart Sidebar -->
+  <div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
+  <div class="cart-sidebar" id="cartSidebar">
+    <div class="cart-header">
+      <div class="d-flex justify-content-between align-items-center">
+        <h4 class="fw-bold mb-0"><i class="fa-solid fa-shopping-cart me-2"></i>Your Cart</h4>
+        <button class="btn btn-outline-secondary btn-sm" onclick="toggleCart()">
+          <i class="fa-solid fa-times"></i>
+        </button>
+      </div>
+    </div>
+    <div class="cart-content">
+      <div id="cartItems">
+        <div class="text-center text-muted py-4">
+          <i class="fa-solid fa-shopping-cart fa-3x mb-3 opacity-25"></i>
+          <p>Your cart is empty</p>
+        </div>
+      </div>
+      <div id="cartSummary" class="d-none">
+        <div class="cart-summary">
+          <div class="row">
+            <div class="col-6">
+              <div class="fw-bold">Total Items:</div>
+              <div class="fw-bold">Subtotal:</div>
+              <div class="fw-bold">Delivery:</div>
+              <hr class="my-2">
+              <div class="fw-bold fs-5">Total:</div>
+            </div>
+            <div class="col-6 text-end">
+              <div id="totalItems">0</div>
+              <div id="subtotalAmount">₹0.00</div>
+              <div id="deliveryAmount">₹0.00</div>
+              <hr class="my-2">
+              <div id="totalAmount" class="fs-5">₹50.00</div>
+            </div>
+          </div>
+          <button class="btn btn-light btn-lg w-100 mt-3" onclick="proceedToCheckout()">
+            <i class="fa-solid fa-credit-card me-2"></i>Proceed to Checkout
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer bg-dark text-white py-5">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-4 mb-4">
+          <h5 class="fw-bold mb-3">Dip Dry Care</h5>
+          <p>Your premium laundry and dry cleaning service provider.</p>
+          <div class="social-links">
+            <a href="https://www.facebook.com/share/17GGPFhu59/" class="text-white me-3"><i
+                class="fab fa-facebook-f"></i></a>
+            <a href="https://www.instagram.com/dipdrycare?igsh=enJuOWtwNnNyc3Br" class="text-white me-3"><i
+                class="fab fa-instagram"></i></a>
+            <a href="https://www.x.com/DipDryCare" class="text-white me-3"><i class="fab fa-twitter"></i></a>
+          </div>
+        </div>
+        <div class="col-lg-8">
+          <div class="alert alert-info mb-0">
+            <div class="row">
+              <div class="col-md-6">
+                <i class="fa-solid fa-truck me-2"></i>
+                <strong>Minimum Order Value</strong> ₹349
+              </div>
+              <div class="col-md-6">
+                <i class="fa-solid fa-clock me-2"></i>
+                <strong>Express delivery</strong> in 24 hours available
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <hr class="my-4">
+      <div class="row">
+        <div class="col-md-6">
+          <p>Copyright © 2025 Dip Dry Care - All Rights Reserved.</p>
+        </div>
+        <div class="col-md-6 text-md-end">
+          <p>Made with <i class="fas fa-heart text-danger"></i> for clean clothes</p>
+        </div>
+      </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="../JSfiles/pricing.js"></script>
+  <script src="../JSfiles/frontend-integration.js"></script>
+</body>
+
+</html>
